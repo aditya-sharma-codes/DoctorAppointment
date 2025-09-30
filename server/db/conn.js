@@ -1,19 +1,18 @@
-const { MongoClient } = require("mongodb");
 const mongoose = require("mongoose");
 mongoose.set("strictQuery", false);
-require("dotenv").config();
 
-const client = mongoose
-  .connect(process.env.MONGO_URI, {
-    useNewUrlParser: true,
-  })
-  .then(() => {
-    console.log("DB connected");
-  })
-  .catch((error) => {
-    console.log("Error: ", error);
+const uri = process.env.MONGO_URI;
 
-    return error;
-  });
+if (!uri) {
+  console.error("❌ MONGO_URI is undefined. Check your .env file!");
+  process.exit(1);
+}
 
-module.exports = client;
+mongoose.connect(uri, {
+  useNewUrlParser: true,
+  useUnifiedTopology: true,
+})
+.then(() => console.log("✅ MongoDB connected"))
+.catch((err) => console.error("❌ MongoDB connection error:", err));
+
+module.exports = mongoose;
